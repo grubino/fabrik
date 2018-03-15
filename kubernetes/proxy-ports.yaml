@@ -1,0 +1,87 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mailu-proxies
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mailu
+        role: mail
+        tier: frontend
+    spec:
+      containers:
+      - name: proxy-imap-auth
+        image: k8s.gcr.io/proxy-to-service:v2
+        args: ["tcp", "2102", "imap", "1"]
+        imagePullPolicy: Always
+        ports:
+          - name: imap-auth
+            hostPort: 2102
+            containerPort: 2102
+            protocol: TCP
+      - name: proxy-imap-transport
+        image: k8s.gcr.io/proxy-to-service:v2
+        args: ["tcp", "2525", "imap", "1"]
+        imagePullPolicy: Always
+        ports:
+          - name: imap-transport
+            hostPort: 2525
+            containerPort: 2525
+            protocol: TCP
+      - name: proxy-imap-default
+        image: k8s.gcr.io/proxy-to-service:v2
+        args: ["tcp", "143", "imap", "1"]
+        imagePullPolicy: Always
+        ports:
+          - name: imap-transport
+            hostPort: 143
+            containerPort: 143
+            protocol: TCP
+      - name: proxy-imap-ssl
+        image: k8s.gcr.io/proxy-to-service:v2
+        args: ["tcp", "993", "imap", "1"]
+        imagePullPolicy: Always
+        ports:
+          - name: imap-ssl
+            hostPort: 993
+            containerPort: 993
+            protocol: TCP
+      - name: proxy-sieve
+        image: k8s.gcr.io/proxy-to-service:v2
+        args: ["tcp", "4190", "imap", "1"]
+        imagePullPolicy: Always
+        ports:
+          - name: sieve
+            hostPort: 4190
+            containerPort: 4190
+            protocol: TCP
+      - name: proxy-smtp
+        image: k8s.gcr.io/proxy-to-service:v2
+        args: ["tcp", "25", "smtp", "1"]
+        imagePullPolicy: Always
+        ports:
+          - name: sieve
+            hostPort: 25
+            containerPort: 25
+            protocol: TCP
+      - name: proxy-smtp-ssl
+        image: k8s.gcr.io/proxy-to-service:v2
+        args: ["tcp", "465", "smtp", "1"]
+        imagePullPolicy: Always
+        ports:
+          - name: smtp-ssl
+            hostPort: 465
+            containerPort: 465
+            protocol: TCP
+      - name: proxy-smtp-starttls
+        image: k8s.gcr.io/proxy-to-service:v2
+        args: ["tcp", "587", "smtp", "1"]
+        imagePullPolicy: Always
+        ports:
+          - name: smtp-starttls
+            hostPort: 587
+            containerPort: 587
+            protocol: TCP

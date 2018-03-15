@@ -8,19 +8,22 @@ metadata:
     role: mail
     tier: backend
 spec:
+  backend:
+    serviceName: mailu-admin
+    servicePort: 80
   tls:
   - hosts:
-    - "mail.greyhatcollective.com"
+    - "greyhatcollective.net"
     secretName: letsencrypt-certs-all
   rules:
-  - host: "mail.greyhatcollective.com"
+  - host: "greyhatcollective.net"
     http:
       paths:
       - path: "/admin"
         backend:
           serviceName: mailu-admin
           servicePort: 80
-
+    
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -88,13 +91,13 @@ spec:
     spec:
       containers:
       - name: imap
-        image: mailu/dovecot:stable
+        image: bibilthaysose/fabrik-dovecot
         imagePullPolicy: Always
         env:
           - name  : DOMAIN
-            value : greyhatcollective.com
-          - name  : HOSTNAME
-            value : mail.greyhatcollective.com
+            value : greyhatcollective.net
+          - name  : HOSTNAMES
+            value : greyhatcollective.net
           - name  : POSTMASTER
             value : admin
         volumeMounts:
@@ -143,6 +146,7 @@ metadata:
     role: mail
     tier: backend
 spec:
+  type: NodePort
   selector:
     app: mailu-imap
     role: mail
@@ -186,9 +190,9 @@ spec:
         imagePullPolicy: Always
         env:
           - name  : DOMAIN
-            value : greyhatcollective.com
+            value : greyhatcollective.net
           - name  : HOSTNAME
-            value : mail.greyhatcollective.com
+            value : greyhatcollective.net
           - name  : MESSAGE_SIZE_LIMIT
             value : "50000000"
           - name  : RELAYHOST
@@ -355,9 +359,9 @@ spec:
         imagePullPolicy: Always
         env:
           - name  : DOMAIN
-            value : greyhatcollective.com
+            value : greyhatcollective.net
           - name  : HOSTNAME
-            value : mail.greyhatcollective.com
+            value : greyhatcollective.net
           - name  : POSTMASTER
             value : core
           - name  : SECRET_KEY
