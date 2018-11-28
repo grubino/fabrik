@@ -10,6 +10,10 @@ spec:
       labels:
         app: letsencrypt-nginx
     spec:
+      hostNetwork: true
+      serviceAccountName: lets-encrypt-sa
+      nodeSelector:
+        node_type: greyhat
       containers:
         - name: letsencrypt-nginx
           image: ployst/letsencrypt
